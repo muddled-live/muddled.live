@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package twitch;
+option go_package = "github.com/atrioc-devs/muddled/grpc";
+
+service TwitchManager { rpc JoinChannel(JoinRequest) returns (JoinResponse); }
+
+message JoinRequest { string channel = 1; }
+message JoinResponse {};
+

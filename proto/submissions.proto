@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package submissions;
+option go_package = "github.com/atrioc-devs/muddled/grpc";
+
+service SubmissionManager {
+  rpc GetSubmissions(GetSubmissionsRequest) returns (SubmissionsResponse);
+  rpc MuteMember(MuteMemberRequest) returns (MuteMemberResponse);
+  rpc LikeVideo(LikeVideoRequest) returns (LikeVideoResponse);
+  rpc Archive(ArchiveRequest) returns (ArchiveResponse);
+}
+
+message Video {
+  uint32 id = 1;
+  string code = 2;
+  string url = 3;
+  string thumbnail_url = 4;
+  string title = 5;
+  int32 view_count = 6;
+  int32 like_count = 7;
+  string uploaded_at = 8;
+  int32 duration = 9;
+  string channel_name = 10;
+  string channel_id = 11;
+  bool is_liked = 12;
+}
+
+message Submission {
+  string sender = 1;
+  uint32 sender_id = 2;
+  uint32 submission_id = 3;
+  Video video = 4;
+}
+
+message GetSubmissionsRequest {
+  string channel = 1;
+  optional uint32 limit = 2;
+  optional uint32 cursor = 3;
+  optional uint32 max_duration = 4;
+  optional uint32 min_duration = 5;
+}
+
+message SubmissionsResponse {
+  repeated Submission submissions = 1;
+  uint32 cursor = 2;
+}
+
+message MuteMemberRequest {
+  string channel = 1;
+  string chatter = 2;
+}
+
+message MuteMemberResponse {}
+
+message LikeVideoRequest {
+  uint32 video_id = 1;
+  string channel = 2;
+}
+
+message LikeVideoResponse {}
+
+message ArchiveRequest {
+  message Chat {
+    string chatter = 1;
+    string channel = 2;
+    string message = 3;
+  }
+
+  repeated Chat messages = 1;
+}
+
+message ArchiveResponse {}
+
