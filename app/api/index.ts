@@ -3,7 +3,7 @@ import {
     Submission as ISubmission,
     SubmissionsResponse,
 } from "./_internal/muddled/submissions_pb";
-import { type AuthOptions, getServerSession, Session } from "next-auth";
+import { type AuthOptions, getServerSession } from "next-auth";
 import Twitch from "next-auth/providers/twitch";
 
 import { DefaultUser } from "next-auth";
@@ -23,8 +23,6 @@ export type Submission = ISubmission.AsObject & {
     isMuted: boolean;
 };
 export type Submissions = Submission[];
-
-const ADMINS = ["CrimpsOnSloper", "ttlnow"];
 
 export type User = {
     name: string;
