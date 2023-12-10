@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package submissions;
-option go_package = "github.com/atrioc-devs/muddled/grpc";
+option go_package = "github.com/muddled-live/muddled.live/grpc";
 
 service SubmissionManager {
   rpc GetSubmissions(GetSubmissionsRequest) returns (SubmissionsResponse);

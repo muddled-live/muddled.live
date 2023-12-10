@@ -57,29 +57,32 @@ export default function GetSmarter() {
     const [spamFetching, setSpamFetching] = useState(false);
     const cursorRef = useRef(0);
 
-    const notify = (bold: string, message: string) =>
-        toast.success(
-            <p className="text-sm">
-                <strong>{bold}</strong> {message}
-            </p>,
-            {
-                className: "toast-success-container toast-success-container-after",
-                icon: (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="#7222C2"
-                        className="w-8 h-8"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                ),
-            },
-        );
+    const notify = (bold: string, message: string) => {
+        return (
+            toast.success(
+                <p className="text-sm">
+                    <strong>{bold}</strong> {message}
+                </p>,
+                {
+                    className: "toast-success-container toast-success-container-after",
+                    icon: (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="#7222C2"
+                            className="w-8 h-8"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
+                    ),
+                },
+            )
+        )
+    }
 
     const fetchData = async () => {
         try {
@@ -123,20 +126,14 @@ export default function GetSmarter() {
     useEffect(() => {
         if (spamFetching) {
             const intervalId = setInterval(() => {
-                setParams({
-                    action: "UPDATE",
-                    urlParams: {
-                        ...params.urlParams,
-                        limit: VIDEOS_TO_FETCH,
-                        cursor: cursorRef.current,
-                    },
-                });
+                updateParams();
             }, 3000);
             return () => clearInterval(intervalId);
         }
     }, [spamFetching]);
 
-    const updateCursor = () => {
+
+    const updateParams = () => {
         setParams({
             action: "UPDATE",
             urlParams: {
@@ -145,10 +142,9 @@ export default function GetSmarter() {
                 cursor: cursorRef.current,
             },
         });
-    };
+    }
 
     const handleFilter = (min: number, max: number) => {
-        window.scrollTo({ top: 0 });
         setParams({
             action: "FILTER",
             urlParams: {
@@ -197,9 +193,9 @@ export default function GetSmarter() {
                 {submissions.length > 0 ? (
                     <InfiniteScroll
                         dataLength={submissions.length}
-                        next={updateCursor}
+                        next={updateParams}
                         hasMore={hasMore}
-                        loader={<VideoLoader num={9} />}
+                        loader={<VideoLoader num={FIRST_FETCH} />}
                         endMessage={
                             <EndMessage handleClickEndMessage={handleClickEndMessage} />
                         }

@@ -12,7 +12,7 @@ Muddled (aka Get Smarter Saturdays) NextJS frontend.
 # First populate your environment variables.
 copy .env.example .env
 # Launch the backend services
-docker compose up -d --pull mysql muddled-backend muddled-twitch
+docker compose up -d mysql muddled-backend muddled-twitch
 npm ci
 # Start the dev server.
 npm run dev
