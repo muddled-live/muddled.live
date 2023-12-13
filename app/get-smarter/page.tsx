@@ -4,20 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 // LIBRARY COMPONENTS
-import InfiniteScroll from "react-infinite-scroll-component";
+//import InfiniteScroll from "react-infinite-scroll-component";
 import { ToastContainer, toast, Slide } from "react-toastify";
 // TYPES
 import { Submission, Submissions } from "@/app/api";
 
 import ConnectionCard from "./_partial/ConnectionCard";
 import FilterTabs from "./_partial/FilterTabs";
-import EndMessage from "./_partial/EndMessage";
 import Video from "./_partial/Video";
 import VideoSkeleton from "../_shared/VideoSkeleton";
 
 import "./styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../_shared/Loader";
+import InfiniteScroll from "../components/InfiniteScroll";
 
 const FIRST_FETCH = 21;
 const VIDEOS_TO_FETCH = 9;
@@ -27,10 +27,6 @@ function addExtraFields(submissionsList: any): Submissions {
         ...obj,
         isMuted: false,
     }));
-}
-
-function VideoLoader({ num }: { num: number }) {
-    return Array(num).map((i) => <VideoSkeleton key={i} />);
 }
 
 export default function GetSmarter() {
@@ -45,15 +41,13 @@ export default function GetSmarter() {
         action: "PAGE LOAD",
         urlParams: {
             limit: FIRST_FETCH,
-            cursor: -1, // USE LOCAL STORAGE IN PRODUCTION
+            cursor: 0,
             minDuration: 0,
             maxDuration: 0,
         },
     });
     const [submissions, setSubmissions] = useState<Submissions>([]);
     const [selectedVideo, setSelectedVideo] = useState(-1);
-    const [hasMore, setHasMore] = useState(true);
-    const [spamFetching, setSpamFetching] = useState(false);
     const cursorRef = useRef(0);
 
     const notify = (bold: string, message: string) => {
@@ -92,14 +86,6 @@ export default function GetSmarter() {
             const response = await fetch("/api/submissions?" + query);
             if (!connected) setConnected(true);
             const { submissionsList, cursor } = await response.json();
-            console.log(submissionsList, cursor)
-            if (submissionsList.length < VIDEOS_TO_FETCH && !spamFetching) {
-                console.log("STARTING SPAM FETCH");
-                //setSpamFetching(true);
-            } else if (submissionsList.length == VIDEOS_TO_FETCH && spamFetching) {
-                console.log("ENDING SPAM FETCH");
-                setSpamFetching(false);
-            }
             console.log(submissionsList)
 
             const newSubmissions = addExtraFields(submissionsList);
@@ -123,15 +109,6 @@ export default function GetSmarter() {
         }
     };
 
-    useEffect(() => {
-        if (spamFetching) {
-            const intervalId = setInterval(() => {
-                updateParams();
-            }, 3000);
-            return () => clearInterval(intervalId);
-        }
-    }, [spamFetching]);
-
 
     const updateParams = () => {
         setParams({
@@ -139,7 +116,7 @@ export default function GetSmarter() {
             urlParams: {
                 ...params.urlParams,
                 limit: VIDEOS_TO_FETCH,
-                cursor: cursorRef.current,
+                cursor: 0,
             },
         });
     }
@@ -149,7 +126,7 @@ export default function GetSmarter() {
             action: "FILTER",
             urlParams: {
                 limit: FIRST_FETCH,
-                cursor: 0,
+                cursor: -1,
                 minDuration: min,
                 maxDuration: max,
             },
@@ -172,16 +149,6 @@ export default function GetSmarter() {
         setSelectedVideo(id);
     };
 
-    const handleClickEndMessage = () => {
-        setParams({
-            action: "UPDATE",
-            urlParams: {
-                ...params.urlParams,
-                cursor: cursorRef.current,
-            },
-        });
-    };
-
     useEffect(() => {
         fetchData();
     }, [params]);
@@ -191,15 +158,7 @@ export default function GetSmarter() {
         <div className="flex items-start max-w-screen min-h-screen">
             <div className="w-3/4 flex flex-wrap p-4">
                 {submissions.length > 0 ? (
-                    <InfiniteScroll
-                        dataLength={submissions.length}
-                        next={updateParams}
-                        hasMore={hasMore}
-                        loader={<VideoLoader num={FIRST_FETCH} />}
-                        endMessage={
-                            <EndMessage handleClickEndMessage={handleClickEndMessage} />
-                        }
-                    >
+                    <InfiniteScroll dataLength={submissions.length} next={updateParams}>
                         {submissions.map((submission: Submission, index: number) => (
                             <Video
                                 key={index}
@@ -212,7 +171,7 @@ export default function GetSmarter() {
                         ))}
                     </InfiniteScroll>
                 ) : (
-                    <VideoSkeleton num={9} />
+                    <VideoSkeleton num={4} />
                 )}
             </div>
             <div className="fixed right-0 bottom-0 flex flex-col justify-end items-center gap-6 flex-shrink-0 w-1/4 p-4 pl-0">
