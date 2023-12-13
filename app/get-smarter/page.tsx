@@ -46,7 +46,8 @@ export default function GetSmarter() {
     });
     const [submissions, setSubmissions] = useState<Submissions>([]);
     const [selectedVideo, setSelectedVideo] = useState(-1);
-    const cursorRef = useRef(0);
+    const cursorRef = useRef(-1);
+    const firstCursorRef = useRef(-1);
 
     const notify = (bold: string, message: string) => {
         return (
@@ -82,11 +83,14 @@ export default function GetSmarter() {
                 query.set(k, v.toString()),
             );
             const response = await fetch("/api/submissions?" + query);
-            if (!connected) setConnected(true);
             const { submissionsList, cursor } = await response.json();
             console.log(submissionsList)
 
             const newSubmissions = addExtraFields(submissionsList);
+
+            if (firstCursorRef.current = -1) {
+                firstCursorRef.current = cursor
+            }
             cursorRef.current = cursor;
 
             switch (params.action) {
@@ -148,8 +152,20 @@ export default function GetSmarter() {
     };
 
     useEffect(() => {
-        fetchData();
+        if (connected) {
+            //fetchData();
+        }
     }, [params]);
+
+    useEffect(() => {
+        fetch("/api/members/crimpsonsloper/load")
+            .then((resp) => resp.json())
+            .then((d) => {
+                cursorRef.current = d.cursor
+                if (!connected) setConnected(true);
+                updateParams()
+            })
+    }, []);
 
     if (status === "loading") return <Loader />;
     return (
@@ -159,7 +175,7 @@ export default function GetSmarter() {
                     {submissions.map((submission: Submission, index: number) => (
                         <Video
                             key={index}
-                            isActive={selectedVideo === submission.submissionId}
+                            isActive={selectedVideo === submission.id}
                             submission={submission}
                             handleSelectVideo={handleSelectVideo}
                             handleMuteChatter={handleMuteChatter}

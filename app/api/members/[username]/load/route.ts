@@ -7,14 +7,19 @@ type Context = {
     };
 };
 
-export async function GET(_: NextRequest, { params }: Context) {
+export async function GET(req: NextRequest) {
     const user = await getUser();
     if (!user) {
         return NextResponse.json({ error: "Not authorized." }, { status: 401 });
     }
     try {
-        await fetch(`http://localhost:3001/${user.name}/${params.username}`)
-        return new NextResponse();
+        const data = await fetch(`http://localhost:3001/load/${user.name}`).then(resp => {
+            return resp.json()
+        }).then((r) => {
+            console.log(r)
+            return r.data
+        });
+        return NextResponse.json(data);
     } catch (err) {
         let error = "Internal error.";
         if (err instanceof Error) error = err.message;
