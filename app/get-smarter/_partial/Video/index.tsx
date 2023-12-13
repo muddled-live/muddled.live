@@ -27,20 +27,22 @@ export default function Video({
     handleSelectVideo,
     handleClickSave,
 }: VideoProps) {
-    const { sender, submissionId, video, isMuted } = submission!;
     const {
         id,
         code,
-        thumbnailUrl,
+        thumbnail,
         title,
         viewCount,
         likeCount,
-        uploadedAt,
+        createdAt,
         duration,
         channelName,
         channelId,
-        isLiked,
-    } = video!;
+        isLiked = false,
+        submittedTo,
+        submittedBy,
+        isMuted = false
+    } = submission!;
 
     const [iframeLoaded, setIframeLoaded] = useState(false);
 
@@ -50,7 +52,7 @@ export default function Video({
 
     const handleClickThumbnail = (event: MouseEvent) => {
         event.preventDefault();
-        handleSelectVideo(submissionId);
+        handleSelectVideo(id);
     };
 
     const handleLoad = () => {
@@ -76,7 +78,7 @@ export default function Video({
                 )}
                 <div className="cursor-pointer absolute top-0 left-0 w-full h-auto">
                     <img
-                        src={thumbnailUrl}
+                        src={thumbnail}
                         className="w-full rounded-xl"
                         onClick={(e) => handleClickThumbnail(e)}
                         alt="YouTube video thumbnail"
@@ -113,11 +115,11 @@ export default function Video({
                         •
                     </div>
                     <div className="text-[#606060] text-sm lg:text-md 2xl:text-base">
-                        {formatUploaded(uploadedAt) + " ago"}
+                        {formatUploaded(createdAt) + " ago"}
                     </div>
                 </div>
                 <div className="inline-flex justify-between items-center self-stretch pt-2">
-                    <ChatterChip onClickMute={handleMuteChatter} sender={sender} />
+                    <ChatterChip onClickMute={handleMuteChatter} sender={submittedBy} />
                     <SaveButton onClickSave={onClickSave} id={id} isLiked={isLiked} />
                 </div>
             </div>

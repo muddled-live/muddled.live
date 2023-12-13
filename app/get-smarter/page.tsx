@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ToastContainer, toast, Slide } from "react-toastify";
 // TYPES
-import { Submission as ISubmission } from "@/app/api/_internal/muddled/submissions_pb";
 import { Submission, Submissions } from "@/app/api";
 
 import ConnectionCard from "./_partial/ConnectionCard";
@@ -20,11 +19,11 @@ import "./styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../_shared/Loader";
 
-const FIRST_FETCH = 15;
+const FIRST_FETCH = 21;
 const VIDEOS_TO_FETCH = 9;
 
-function addExtraFields(submissionsList: ISubmission.AsObject[]): Submissions {
-    return submissionsList.map((obj) => ({
+function addExtraFields(submissionsList: any): Submissions {
+    return submissionsList.map((obj: any) => ({
         ...obj,
         isMuted: false,
     }));
@@ -46,7 +45,7 @@ export default function GetSmarter() {
         action: "PAGE LOAD",
         urlParams: {
             limit: FIRST_FETCH,
-            cursor: 0, // USE LOCAL STORAGE IN PRODUCTION
+            cursor: -1, // USE LOCAL STORAGE IN PRODUCTION
             minDuration: 0,
             maxDuration: 0,
         },
@@ -93,9 +92,10 @@ export default function GetSmarter() {
             const response = await fetch("/api/submissions?" + query);
             if (!connected) setConnected(true);
             const { submissionsList, cursor } = await response.json();
+            console.log(submissionsList, cursor)
             if (submissionsList.length < VIDEOS_TO_FETCH && !spamFetching) {
                 console.log("STARTING SPAM FETCH");
-                setSpamFetching(true);
+                //setSpamFetching(true);
             } else if (submissionsList.length == VIDEOS_TO_FETCH && spamFetching) {
                 console.log("ENDING SPAM FETCH");
                 setSpamFetching(false);
