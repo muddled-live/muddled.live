@@ -1,8 +1,3 @@
-import { GetSubmissionsOptions } from "./_internal/muddled";
-import {
-    Submission as ISubmission,
-    SubmissionsResponse,
-} from "./_internal/muddled/submissions_pb";
 import { type AuthOptions, getServerSession } from "next-auth";
 import Twitch from "next-auth/providers/twitch";
 
@@ -18,11 +13,6 @@ declare module "next-auth" {
         role: number;
     }
 }
-
-export type Submission = ISubmission.AsObject & {
-    isMuted: boolean;
-};
-export type Submissions = Submission[];
 
 export type User = {
     name: string;
@@ -45,15 +35,6 @@ export const likeVideo = (id: number) =>
 export const muteMember = (chatter: string) =>
     fetch(`/api/members/${chatter}/mute`, { method: "PATCH" });
 
-export const getSubmissions = async (
-    opt?: Partial<GetSubmissionsOptions>,
-): Promise<SubmissionsResponse.AsObject> => {
-    const query = new URLSearchParams();
-    if (opt) {
-        Object.entries(opt).forEach(([k, v]) => query.set(k, v.toString()));
-    }
-    return fetch(`/api/submissions?` + query).then((r) => r.json());
-};
 
 export const getUser = async (): Promise<User | null> => {
     const session = await getServerSession(authOptions);

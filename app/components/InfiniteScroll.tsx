@@ -50,7 +50,7 @@ export default function InfiniteScroll({ children, dataLength, next }: Props) {
         <div className="w-full">
             <div className="h-auto overflow-auto" ref={infScroll}>
                 {children}
-                {showLoader || dataLength == 0 && <VideoSkeleton num={4} />}
+                {showLoader || dataLength == 0 && <VideoSkeleton num={16} />}
             </div>
         </div>
     )

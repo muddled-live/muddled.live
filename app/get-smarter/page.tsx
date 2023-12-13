@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 import { ToastContainer, toast, Slide } from "react-toastify";
-import { Submission, Submissions } from "@/app/api";
+
 
 import ConnectionCard from "./_partial/ConnectionCard";
 import FilterTabs from "./_partial/FilterTabs";
@@ -20,7 +20,7 @@ import "./styles.css";
 const FIRST_FETCH = 21;
 const VIDEOS_TO_FETCH = 9;
 
-function addExtraFields(submissionsList: any): Submissions {
+function addExtraFields(submissionsList: any): any {
     return submissionsList.map((obj: any) => ({
         ...obj,
         isMuted: false,
@@ -35,6 +35,8 @@ export default function GetSmarter() {
         },
     });
     const [connected, setConnected] = useState(false);
+    const [action, setAction] = useState("load");
+
     const [params, setParams] = useState({
         action: "PAGE LOAD",
         urlParams: {
@@ -44,7 +46,7 @@ export default function GetSmarter() {
             maxDuration: 0,
         },
     });
-    const [submissions, setSubmissions] = useState<Submissions>([]);
+    const [submissions, setSubmissions] = useState<any>([]);
     const [selectedVideo, setSelectedVideo] = useState(-1);
     const cursorRef = useRef(-1);
     const firstCursorRef = useRef(-1);
@@ -118,7 +120,7 @@ export default function GetSmarter() {
             urlParams: {
                 ...params.urlParams,
                 limit: VIDEOS_TO_FETCH,
-                cursor: cursorRef.current,
+                cursor: 0,
             },
         });
     }
@@ -153,7 +155,7 @@ export default function GetSmarter() {
 
     useEffect(() => {
         if (connected) {
-            //fetchData();
+            fetchData();
         }
     }, [params]);
 
@@ -172,7 +174,7 @@ export default function GetSmarter() {
         <div className="flex items-start max-w-screen min-h-screen">
             <div className="w-3/4 flex flex-wrap p-4">
                 <InfiniteScroll dataLength={submissions.length} next={updateParams}>
-                    {submissions.map((submission: Submission, index: number) => (
+                    {submissions.map((submission: any, index: number) => (
                         <Video
                             key={index}
                             isActive={selectedVideo === submission.id}
