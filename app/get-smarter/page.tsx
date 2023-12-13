@@ -3,21 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
-// LIBRARY COMPONENTS
-//import InfiniteScroll from "react-infinite-scroll-component";
+
 import { ToastContainer, toast, Slide } from "react-toastify";
-// TYPES
 import { Submission, Submissions } from "@/app/api";
 
 import ConnectionCard from "./_partial/ConnectionCard";
 import FilterTabs from "./_partial/FilterTabs";
 import Video from "./_partial/Video";
 import VideoSkeleton from "../_shared/VideoSkeleton";
-
-import "./styles.css";
-import "react-toastify/dist/ReactToastify.css";
 import Loader from "../_shared/Loader";
 import InfiniteScroll from "../components/InfiniteScroll";
+
+import "react-toastify/dist/ReactToastify.css";
+import "./styles.css";
 
 const FIRST_FETCH = 21;
 const VIDEOS_TO_FETCH = 9;
@@ -41,7 +39,7 @@ export default function GetSmarter() {
         action: "PAGE LOAD",
         urlParams: {
             limit: FIRST_FETCH,
-            cursor: 0,
+            cursor: -1,
             minDuration: 0,
             maxDuration: 0,
         },
@@ -116,7 +114,7 @@ export default function GetSmarter() {
             urlParams: {
                 ...params.urlParams,
                 limit: VIDEOS_TO_FETCH,
-                cursor: 0,
+                cursor: cursorRef.current,
             },
         });
     }
@@ -157,22 +155,18 @@ export default function GetSmarter() {
     return (
         <div className="flex items-start max-w-screen min-h-screen">
             <div className="w-3/4 flex flex-wrap p-4">
-                {submissions.length > 0 ? (
-                    <InfiniteScroll dataLength={submissions.length} next={updateParams}>
-                        {submissions.map((submission: Submission, index: number) => (
-                            <Video
-                                key={index}
-                                isActive={selectedVideo === submission.submissionId}
-                                submission={submission}
-                                handleSelectVideo={handleSelectVideo}
-                                handleMuteChatter={handleMuteChatter}
-                                handleClickSave={notify}
-                            />
-                        ))}
-                    </InfiniteScroll>
-                ) : (
-                    <VideoSkeleton num={4} />
-                )}
+                <InfiniteScroll dataLength={submissions.length} next={updateParams}>
+                    {submissions.map((submission: Submission, index: number) => (
+                        <Video
+                            key={index}
+                            isActive={selectedVideo === submission.submissionId}
+                            submission={submission}
+                            handleSelectVideo={handleSelectVideo}
+                            handleMuteChatter={handleMuteChatter}
+                            handleClickSave={notify}
+                        />
+                    ))}
+                </InfiniteScroll>
             </div>
             <div className="fixed right-0 bottom-0 flex flex-col justify-end items-center gap-6 flex-shrink-0 w-1/4 p-4 pl-0">
                 <FilterTabs handleFilter={handleFilter} />

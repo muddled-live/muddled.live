@@ -29,6 +29,7 @@ export default function InfiniteScroll({ children, dataLength, next }: Props) {
             }, 3000);
             return () => clearInterval(intervalId);
         }
+        console.log(reachedBottom)
     }, [reachedBottom]);
 
     const throttledOnScrollListener = throttle(150, () => {
@@ -49,7 +50,7 @@ export default function InfiniteScroll({ children, dataLength, next }: Props) {
         <div className="w-full">
             <div className="h-auto overflow-auto" ref={infScroll}>
                 {children}
-                {showLoader && <VideoSkeleton num={4} />}
+                {showLoader || dataLength == 0 && <VideoSkeleton num={4} />}
             </div>
         </div>
     )
