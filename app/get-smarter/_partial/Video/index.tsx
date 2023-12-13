@@ -10,7 +10,6 @@ import { Submission } from "@/app/api";
 import SaveButton from "./SaveButton";
 import ChatterChip from "./ChatterChip";
 import VideoSkeleton from "@/app/_shared/VideoSkeleton";
-import "./styles.css";
 
 type VideoProps = {
     isActive: boolean;
