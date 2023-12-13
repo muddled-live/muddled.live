@@ -6,14 +6,13 @@ import {
     formatUploaded,
     formatViewsLikes,
 } from "@/app/utils/utils";
-import { Submission } from "@/app/api";
 import SaveButton from "./SaveButton";
 import ChatterChip from "./ChatterChip";
 import VideoSkeleton from "@/app/_shared/VideoSkeleton";
 
 type VideoProps = {
     isActive: boolean;
-    submission: Submission;
+    submission: any;
     handleMuteChatter: (user: string) => void;
     handleSelectVideo: (submissionId: number) => void;
     handleClickSave: (title: string, message: string) => void;
