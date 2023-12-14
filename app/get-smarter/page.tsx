@@ -2,15 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-
 import { ToastContainer, toast, Slide } from "react-toastify";
-
 
 import ConnectionCard from "./_partial/ConnectionCard";
 import FilterTabs from "./_partial/FilterTabs";
 import Video from "./_partial/Video";
 import VideoSkeleton from "../components/VideoSkeleton";
-import Loader from "../components/Loader";
 import InfiniteScroll from "../components/InfiniteScroll";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -18,8 +15,6 @@ import ToastIcon from "../components/ToastIcon";
 
 const FIRST_FETCH = 21;
 const VIDEOS_TO_FETCH = 9;
-
-
 
 function addExtraFields(submissionsList: any): any {
     return submissionsList.map((obj: any) => ({
@@ -31,7 +26,6 @@ function addExtraFields(submissionsList: any): any {
 export default function GetSmarter() {
     const { data: session, status } = useSession();
     const [connected, setConnected] = useState(false);
-    const [action, setAction] = useState("load");
 
     const [params, setParams] = useState({
         action: "PAGE LOAD",
@@ -72,10 +66,6 @@ export default function GetSmarter() {
             switch (params.action) {
                 case "UPDATE":
                     setSubmissions([...submissions, ...newSubmissions]);
-                    break;
-
-                case "PAGE LOAD":
-                    setSubmissions(newSubmissions);
                     break;
 
                 default:
@@ -131,7 +121,6 @@ export default function GetSmarter() {
             })
     }, []);
 
-    if (status === "loading") return <Loader />;
     return (
         <div className="flex items-start max-w-screen min-h-screen">
             <div className="w-3/4 flex flex-wrap p-4">

@@ -13,7 +13,7 @@ export async function PATCH(_: NextRequest, { params }: Context) {
         return NextResponse.json({ error: "Not authorized" }, { status: 401 });
     }
     try {
-        await fetch(`http://localhost:3001/${user.name}/${Number(params.id)}`)
+        await fetch(`${process.env.SERVER_URL}/${user.name}/${Number(params.id)}`)
         return new NextResponse();
     } catch (err) {
         let error = "Internal error.";

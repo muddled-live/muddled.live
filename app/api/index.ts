@@ -35,10 +35,10 @@ export const authOptions: AuthOptions = {
 };
 
 export const likeVideo = (id: number) =>
-    fetch(`/api/videos/${id}/like`, { method: "PATCH" });
+    fetch(`${process.env.SERVER_URL}/videos/${id}/like`, { method: "PATCH" });
 
 export const muteMember = (chatter: string) =>
-    fetch(`/api/members/${chatter}/mute`, { method: "PATCH" });
+    fetch(`${process.env.SERVER_URL}/members/${chatter}/mute`, { method: "PATCH" });
 
 
 export const getUser = async (): Promise<User | null> => {
