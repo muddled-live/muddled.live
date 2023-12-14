@@ -32,7 +32,7 @@ export default function Video({
         title,
         viewCount,
         likeCount,
-        createdAt,
+        publishedAt,
         duration,
         channelName,
         channelId,
@@ -113,7 +113,7 @@ export default function Video({
                         •
                     </div>
                     <div className="text-[#606060] text-sm lg:text-md 2xl:text-base">
-                        {formatUploaded(createdAt) + " ago"}
+                        {formatUploaded(publishedAt) + " ago"}
                     </div>
                 </div>
                 <div className="inline-flex justify-between items-center self-stretch pt-2">

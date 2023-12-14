@@ -2,6 +2,7 @@ import { type AuthOptions, getServerSession } from "next-auth";
 import Twitch from "next-auth/providers/twitch";
 
 import { DefaultUser } from "next-auth";
+
 declare module "next-auth" {
     interface Session {
         user?: DefaultUser & {
@@ -27,6 +28,10 @@ export const authOptions: AuthOptions = {
             clientSecret: process.env.TWITCH_CLIENT_SECRET as string,
         }),
     ],
+    pages: {
+        signIn: '/',
+        signOut: '/'
+    }
 };
 
 export const likeVideo = (id: number) =>

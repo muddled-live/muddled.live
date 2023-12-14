@@ -38,7 +38,7 @@ export default function InfiniteScroll({ children, dataLength, next }: Props) {
         const innerHeight = window.innerHeight;
         const scrollTop = document.documentElement.scrollTop;
 
-        const hasReachedBottom = offsetHeight - (innerHeight + scrollTop) <= 200;
+        const hasReachedBottom = offsetHeight - (innerHeight + scrollTop) <= 10;
 
         if (hasReachedBottom) {
             setShowLoader(true)

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 import { ToastContainer, toast, Slide } from "react-toastify";
@@ -45,12 +44,7 @@ function addExtraFields(submissionsList: any): any {
 }
 
 export default function GetSmarter() {
-    const { data: session, status } = useSession({
-        required: true,
-        onUnauthenticated() {
-            redirect("/");
-        },
-    });
+    const { data: session, status } = useSession();
     const [connected, setConnected] = useState(false);
     const [action, setAction] = useState("load");
 
@@ -83,11 +77,7 @@ export default function GetSmarter() {
 
     const fetchData = async () => {
         try {
-            const query = new URLSearchParams();
-            Object.entries(params.urlParams).forEach(([k, v]) =>
-                query.set(k, v.toString()),
-            );
-            const response = await fetch("/api/submissions?" + query);
+            const response = await fetch("/api/submissions?cursor=" + cursorRef.current);
             const { submissionsList, cursor } = await response.json();
             console.log(submissionsList)
 
@@ -123,18 +113,6 @@ export default function GetSmarter() {
             },
         });
     }
-
-    const handleFilter = (min: number, max: number) => {
-        setParams({
-            action: "FILTER",
-            urlParams: {
-                limit: FIRST_FETCH,
-                cursor: -1,
-                minDuration: min,
-                maxDuration: max,
-            },
-        });
-    };
 
     const handleMuteChatter = (username: string) => {
         notify(username, "has been muted");
@@ -186,7 +164,7 @@ export default function GetSmarter() {
                 </InfiniteScroll>
             </div>
             <div className="fixed right-0 bottom-0 flex flex-col justify-end items-center gap-6 flex-shrink-0 w-1/4 p-4 pl-0">
-                <FilterTabs handleFilter={handleFilter} />
+                {/* <FilterTabs handleFilter={handleFilter} /> */}
                 <ConnectionCard
                     username={session?.user?.name!}
                     connected={connected}
