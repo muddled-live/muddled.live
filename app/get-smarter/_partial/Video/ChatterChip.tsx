@@ -1,4 +1,3 @@
-"use client";
 import { muteMember } from "@/app/api";
 
 type Props = {

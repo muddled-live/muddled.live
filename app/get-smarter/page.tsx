@@ -10,8 +10,8 @@ import { ToastContainer, toast, Slide } from "react-toastify";
 import ConnectionCard from "./_partial/ConnectionCard";
 import FilterTabs from "./_partial/FilterTabs";
 import Video from "./_partial/Video";
-import VideoSkeleton from "../_shared/VideoSkeleton";
-import Loader from "../_shared/Loader";
+import VideoSkeleton from "../components/VideoSkeleton";
+import Loader from "../components/Loader";
 import InfiniteScroll from "../components/InfiniteScroll";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -19,6 +19,23 @@ import "./styles.css";
 
 const FIRST_FETCH = 21;
 const VIDEOS_TO_FETCH = 9;
+
+const ToastIcon = () => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="#7222C2"
+            className="w-8 h-8"
+        >
+            <path
+                fillRule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                clipRule="evenodd"
+            />
+        </svg>
+    )
+}
 
 function addExtraFields(submissionsList: any): any {
     return submissionsList.map((obj: any) => ({
@@ -49,7 +66,6 @@ export default function GetSmarter() {
     const [submissions, setSubmissions] = useState<any>([]);
     const [selectedVideo, setSelectedVideo] = useState(-1);
     const cursorRef = useRef(-1);
-    const firstCursorRef = useRef(-1);
 
     const notify = (bold: string, message: string) => {
         return (
@@ -59,20 +75,7 @@ export default function GetSmarter() {
                 </p>,
                 {
                     className: "toast-success-container toast-success-container-after",
-                    icon: (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="#7222C2"
-                            className="w-8 h-8"
-                        >
-                            <path
-                                fillRule="evenodd"
-                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                    ),
+                    icon: <ToastIcon />,
                 },
             )
         )
@@ -89,10 +92,6 @@ export default function GetSmarter() {
             console.log(submissionsList)
 
             const newSubmissions = addExtraFields(submissionsList);
-
-            if (firstCursorRef.current = -1) {
-                firstCursorRef.current = cursor
-            }
             cursorRef.current = cursor;
 
             switch (params.action) {
@@ -120,7 +119,7 @@ export default function GetSmarter() {
             urlParams: {
                 ...params.urlParams,
                 limit: VIDEOS_TO_FETCH,
-                cursor: 0,
+                cursor: cursorRef.current,
             },
         });
     }
@@ -160,7 +159,7 @@ export default function GetSmarter() {
     }, [params]);
 
     useEffect(() => {
-        fetch("/api/members/crimpsonsloper/load")
+        fetch(`/api/members/${session?.user?.name}/load`)
             .then((resp) => resp.json())
             .then((d) => {
                 cursorRef.current = d.cursor

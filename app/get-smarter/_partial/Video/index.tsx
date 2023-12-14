@@ -8,7 +8,7 @@ import {
 } from "@/app/utils/utils";
 import SaveButton from "./SaveButton";
 import ChatterChip from "./ChatterChip";
-import VideoSkeleton from "@/app/_shared/VideoSkeleton";
+import VideoSkeleton from "@/app/components/VideoSkeleton";
 
 type VideoProps = {
     isActive: boolean;

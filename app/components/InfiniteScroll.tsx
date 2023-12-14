@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { throttle } from 'throttle-debounce';
-import VideoSkeleton from '../_shared/VideoSkeleton';
+import VideoSkeleton from './VideoSkeleton';
 
 interface Props {
     children: React.ReactNode;
@@ -20,6 +20,7 @@ export default function InfiniteScroll({ children, dataLength, next }: Props) {
 
     useEffect(() => {
         setShowLoader(false)
+        console.log(dataLength)
     }, [dataLength]);
 
     useEffect(() => {
@@ -50,7 +51,7 @@ export default function InfiniteScroll({ children, dataLength, next }: Props) {
         <div className="w-full">
             <div className="h-auto overflow-auto" ref={infScroll}>
                 {children}
-                {showLoader || dataLength == 0 && <VideoSkeleton num={16} />}
+                {showLoader || dataLength == 0 && <VideoSkeleton num={12} />}
             </div>
         </div>
     )
