@@ -20,7 +20,7 @@ export default function AuthButton() {
                     </p>
                 </div>
             </div>
-            <button disabled className="w-10 h-10 flex justify-center items-center rounded-full border-2 border-white relative">
+            <div className="w-10 h-10 flex justify-center items-center rounded-full border-2 border-white relative">
                 {session?.user?.image ? (
                     <img
                         className="w-9 h-9 rounded-full "
@@ -30,7 +30,7 @@ export default function AuthButton() {
                 ) : (
                     <div className="w-9 h-9 rounded-full bg-gray-500" />
                 )}
-            </button>
+            </div>
         </button>
     ) : (
         <button
