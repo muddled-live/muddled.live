@@ -9,21 +9,18 @@ import {
 import SaveButton from "./SaveButton";
 import ChatterChip from "./ChatterChip";
 import VideoSkeleton from "@/app/components/VideoSkeleton";
+import "./styles.css"
 
 type VideoProps = {
     isActive: boolean;
     submission: any;
-    handleMuteChatter: (user: string) => void;
     handleSelectVideo: (submissionId: number) => void;
-    handleClickSave: (title: string, message: string) => void;
 };
 
 export default function Video({
     isActive,
     submission,
-    handleMuteChatter,
     handleSelectVideo,
-    handleClickSave,
 }: VideoProps) {
     const {
         id,
@@ -39,7 +36,6 @@ export default function Video({
         isLiked = false,
         submittedTo,
         submittedBy,
-        isMuted = false
     } = submission!;
 
     const [iframeLoaded, setIframeLoaded] = useState(false);
@@ -57,11 +53,7 @@ export default function Video({
         setIframeLoaded(true);
     };
 
-    const onClickSave = (saved: boolean) => {
-        handleClickSave(title, `has been ${saved ? "" : "un"}liked`);
-    };
 
-    if (isMuted) return <VideoSkeleton />;
     return (
         <div className="sm:w-1/2 xl:w-1/3 2xl:w-1/4 h-full flex-col inline-flex justify-start items-start gap-1 p-2 mb-8">
             <div className={`w-full height-100 pb-[56.25%] relative`}>
@@ -89,7 +81,7 @@ export default function Video({
                 </div>
             </div>
             <div className="flex flex-col self-stretch">
-                <p className="self-stretch text-black font-bold">
+                <p className="self-stretch text-black font-bold yt-title">
                     {title}
                 </p>
                 <a
@@ -117,8 +109,8 @@ export default function Video({
                     </div>
                 </div>
                 <div className="inline-flex justify-between items-center self-stretch pt-2">
-                    <ChatterChip onClickMute={handleMuteChatter} sender={submittedBy} />
-                    <SaveButton onClickSave={onClickSave} id={id} isLiked={isLiked} />
+                    <ChatterChip sender={submittedBy} />
+                    {/* <SaveButton onClickSave={onClickSave} id={id} isLiked={isLiked} /> */}
                 </div>
             </div>
         </div>
