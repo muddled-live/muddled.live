@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function InfiniteScroll({ children, next, setFetching }: Props) {
-    const [reachedBottom, setReachedBottom] = useState(false);
+    const [reachedBottom, setReachedBottom] = useState(true);
     const parentRef = useRef<HTMLDivElement | null>(null);
     const itemsRef = useRef<HTMLDivElement | null>(null);
 

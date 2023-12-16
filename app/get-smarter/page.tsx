@@ -80,7 +80,7 @@ export default function GetSmarter() {
         }
     }, [params]);
 
-    if (!connected) return <p>loading..</p>
+    if (!connected) return null
 
     return (
         <div className="flex items-start max-w-screen min-h-screen">
