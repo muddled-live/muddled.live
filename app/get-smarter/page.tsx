@@ -12,21 +12,18 @@ import InfiniteScroll from "../components/InfiniteScroll";
 
 import "react-toastify/dist/ReactToastify.css";
 import ToastIcon from "../components/ToastIcon";
+import { getSubmissions, pageLoad } from "../api";
 
 const FIRST_FETCH = 21;
 const VIDEOS_TO_FETCH = 9;
 
-function addExtraFields(submissionsList: any): any {
-    return submissionsList.map((obj: any) => ({
-        ...obj,
-        isMuted: false,
-    }));
-}
-
 export default function GetSmarter() {
     const { data: session, status } = useSession();
     const [connected, setConnected] = useState(false);
-
+    const [submissions, setSubmissions] = useState<any>([]);
+    const [selectedVideo, setSelectedVideo] = useState(-1);
+    const [isFetching, setIsFetching] = useState(false);
+    const cursorRef = useRef(-1);
     const [params, setParams] = useState({
         action: "PAGE LOAD",
         urlParams: {
@@ -36,49 +33,9 @@ export default function GetSmarter() {
             maxDuration: 0,
         },
     });
-    const [submissions, setSubmissions] = useState<any>([]);
-    const [selectedVideo, setSelectedVideo] = useState(-1);
-    const cursorRef = useRef(-1);
-
-    const notify = (bold: string, message: string) => {
-        return (
-            toast.success(
-                <p className="text-sm">
-                    <strong>{bold}</strong> {message}
-                </p>,
-                {
-                    className: "toast-success-container toast-success-container-after",
-                    icon: <ToastIcon />,
-                },
-            )
-        )
-    }
-
-    const fetchData = async () => {
-        try {
-            const response = await fetch("/api/submissions?cursor=" + cursorRef.current);
-            const { submissionsList, cursor } = await response.json();
-            console.log(submissionsList)
-
-            const newSubmissions = addExtraFields(submissionsList);
-            cursorRef.current = cursor;
-
-            switch (params.action) {
-                case "UPDATE":
-                    setSubmissions([...submissions, ...newSubmissions]);
-                    break;
-
-                default:
-                    setSubmissions(newSubmissions);
-                    break;
-            }
-        } catch (error) {
-            console.error(`${error} Could not Fetch Data `);
-        }
-    };
-
 
     const updateParams = () => {
+        setIsFetching(true)
         setParams({
             action: "UPDATE",
             urlParams: {
@@ -89,16 +46,20 @@ export default function GetSmarter() {
         });
     }
 
-    const handleMuteChatter = (username: string) => {
-        notify(username, "has been muted");
-        setSubmissions(
-            [...submissions].map((vid) => {
-                if (vid.sender === username) {
-                    return { ...vid, isMuted: true };
-                }
-                return vid;
-            }),
-        );
+    const updateIsFetching = (v: boolean) => {
+        setIsFetching(v)
+        console.log(v)
+    }
+
+    const fetchData = async () => {
+        try {
+            const response = await getSubmissions(cursorRef.current);
+            const { submissionsList, cursor } = await response.json();
+            cursorRef.current = cursor;
+            setSubmissions([...submissions, ...submissionsList]);
+        } catch (error) {
+            console.error(`${error} Could not Fetch Data `);
+        }
     };
 
     const handleSelectVideo = (id: number) => {
@@ -106,51 +67,43 @@ export default function GetSmarter() {
     };
 
     useEffect(() => {
+        pageLoad().then((resp) => (resp.json())).then((data) => {
+            setSubmissions(data.submissionsList);
+            cursorRef.current = data.cursor
+            setConnected(true)
+        })
+    }, []);
+
+    useEffect(() => {
         if (connected) {
             fetchData();
         }
     }, [params]);
 
-    useEffect(() => {
-        fetch(`/api/members/${session?.user?.name}/load`)
-            .then((resp) => resp.json())
-            .then((d) => {
-                cursorRef.current = d.cursor
-                if (!connected) setConnected(true);
-                updateParams()
-            })
-    }, []);
+    if (!connected) return <p>loading..</p>
 
     return (
         <div className="flex items-start max-w-screen min-h-screen">
             <div className="w-3/4 flex flex-wrap p-4">
-                <InfiniteScroll dataLength={submissions.length} next={updateParams}>
+                <InfiniteScroll next={updateParams} setFetching={updateIsFetching}>
                     {submissions.map((submission: any, index: number) => (
                         <Video
                             key={index}
                             isActive={selectedVideo === submission.id}
                             submission={submission}
                             handleSelectVideo={handleSelectVideo}
-                            handleMuteChatter={handleMuteChatter}
-                            handleClickSave={notify}
                         />
                     ))}
                 </InfiniteScroll>
             </div>
             <div className="fixed right-0 bottom-0 flex flex-col justify-end items-center gap-6 flex-shrink-0 w-1/4 p-4 pl-0">
                 {/* <FilterTabs handleFilter={handleFilter} /> */}
+                <p>{isFetching ? "fetching" : "not fetching"}</p>
                 <ConnectionCard
                     username={session?.user?.name!}
                     connected={connected}
                 />
             </div>
-            <ToastContainer
-                position="bottom-left"
-                transition={Slide}
-                closeOnClick
-                draggable={false}
-                theme="light"
-            />
         </div>
     );
 }

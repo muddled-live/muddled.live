@@ -1,20 +1,6 @@
 import { type AuthOptions, getServerSession } from "next-auth";
 import Twitch from "next-auth/providers/twitch";
 
-import { DefaultUser } from "next-auth";
-
-declare module "next-auth" {
-    interface Session {
-        user?: DefaultUser & {
-            id: string;
-            role: number;
-        };
-    }
-    interface User extends DefaultUser {
-        role: number;
-    }
-}
-
 export type User = {
     name: string;
     email: string;
@@ -39,6 +25,14 @@ export const likeVideo = (id: number) =>
 
 export const muteMember = (chatter: string) =>
     fetch(`${process.env.SERVER_URL}/members/${chatter}/mute`, { method: "PATCH" });
+
+export const pageLoad = () => {
+    return fetch(`/api/load`, { method: "GET" });
+
+}
+
+export const getSubmissions = (cursor: number) =>
+    fetch(`/api/submissions?cursor=${cursor}`, { method: "GET" });
 
 
 export const getUser = async (): Promise<User | null> => {
