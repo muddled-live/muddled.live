@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Not authorized." }, { status: 401 });
     }
     try {
-        const data = await fetch(`${process.env.SERVER_URL}/load/atrioc`)
+        const data = await fetch(`${process.env.SERVER_URL}/load/${user.name}`)
             .then(resp => {
                 return resp.json()
             }).then((r) => {
