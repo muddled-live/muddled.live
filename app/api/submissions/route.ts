@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const subs = await fetch(`${process.env.SERVER_URL}/submissions${query}&channel=sakulstar`)
+        const subs = await fetch(`${process.env.SERVER_URL}/submissions${query}&channel=${user.name.toLowerCase()}`)
             .then(resp => {
                 return resp.json()
             }).then((r) => {
